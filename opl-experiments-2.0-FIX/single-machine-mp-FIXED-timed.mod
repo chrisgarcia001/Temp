@@ -7,7 +7,7 @@
  //using CP;
  
  execute PARAMS {
-   cplex.tilim = 10; // time limit in seconds
+   cplex.tilim = 1200; // time limit in seconds
  }
  
  int numJobs = ...;
