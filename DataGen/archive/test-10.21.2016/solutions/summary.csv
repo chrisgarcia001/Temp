@@ -1,0 +1,21 @@
+Problem ID, Objective, Elapsed Time
+init_test_1,7260.21,0.03
+init_test_10,6230.99,0.02
+init_test_2,7895.95,0.03
+init_test_3,6981.92,0.03
+init_test_4,7553.34,0.06
+init_test_5,7405.72,0.03
+init_test_6,7280.22,0.03
+init_test_7,6594.09,0.03
+init_test_8,6007.92,0.03
+init_test_9,6440.45,0.02
+updated_test_1,24699.58,0.03
+updated_test_10,20377.61,0.01
+updated_test_2,27441.84,0.03
+updated_test_3,23293.57,0.02
+updated_test_4,24263.65,0.02
+updated_test_5,26730.23,0.02
+updated_test_6,24150.43,0.02
+updated_test_7,22333.77,0.03
+updated_test_8,20192.31,0.03
+updated_test_9,22330.19,0.03
