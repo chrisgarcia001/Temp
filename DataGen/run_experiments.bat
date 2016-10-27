@@ -1,14 +1,14 @@
-rem python .\src\run_experiment.py .\params\mmmq.csv
-rem python .\src\run_experiment.py .\params\mmms.csv
-rem python .\src\run_experiment.py .\params\mmpq.csv
-rem python .\src\run_experiment.py .\params\mmps.csv
-rem python .\src\run_experiment.py .\params\mpmq.csv
-rem python .\src\run_experiment.py .\params\mpms.csv
-rem python .\src\run_experiment.py .\params\mppq.csv
-rem python .\src\run_experiment.py .\params\mpps.csv
+python .\src\run_experiment.py .\params\mmmq.csv
+python .\src\run_experiment.py .\params\mmms.csv
+python .\src\run_experiment.py .\params\mmpq.csv
+python .\src\run_experiment.py .\params\mmps.csv
+python .\src\run_experiment.py .\params\mpmq.csv
+python .\src\run_experiment.py .\params\mpms.csv
+python .\src\run_experiment.py .\params\mppq.csv
+python .\src\run_experiment.py .\params\mpps.csv
 
-rem python .\src\run_experiment.py .\params\pmmq.csv
-rem python .\src\run_experiment.py .\params\pmms.csv
+python .\src\run_experiment.py .\params\pmmq.csv
+python .\src\run_experiment.py .\params\pmms.csv
 python .\src\run_experiment.py .\params\pmpq.csv
 python .\src\run_experiment.py .\params\pmps.csv
 python .\src\run_experiment.py .\params\ppmq.csv

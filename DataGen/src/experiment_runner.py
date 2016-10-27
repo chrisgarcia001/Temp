@@ -108,7 +108,8 @@ class DataGenerator:
 		matrix = dim_matrix(self.num_resource_types, self.num_tasks, 0)
 		for k in range(self.num_tasks):
 			#inds = [0] + rnd.sample(range(1, self.num_resource_types), max(0, rnd.randint(min_types - 1, max_types - 1)))
-			inds = rnd.sample(range(self.num_resource_types), max(0, rnd.randint(min_types, max_types)))
+			#inds = rnd.sample(range(self.num_resource_types), max(0, rnd.randint(min_types, max_types)))
+			inds = range(self.num_resource_types)
 			for j in inds:
 				a = max(1,int(min_perc * self.available_resources[j]))
 				b = math.ceil(max_perc * self.available_resources[j])
