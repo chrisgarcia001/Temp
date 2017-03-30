@@ -4,8 +4,9 @@ require 'json'
 class Item
   attr_accessor :footprint, :path
   
-  def initialize footprint=nil
+  def initialize footprint=nil, path = nil
     @footprint = footprint
+    @path = path
   end
 end
 
@@ -105,12 +106,12 @@ class ProbFunctionBuilder
   include Singleton
   
   def initialize
-    @functions = [ExponentialFunction.new, DecreasingStepFunction]
+    @function_classes = [ExponentialFunction, DecreasingStepFunction]
   end
   
   def build json
-    @functions.each do |f|
-      v = f.from_json json
+    @function_classes.each do |f|
+      v = f.new.from_json json
       return v if v
     end
     nil
