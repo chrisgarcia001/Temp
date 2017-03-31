@@ -105,12 +105,12 @@ end
 class ProbFunctionBuilder
   
   def initialize
-    @function_classes = [ExponentialFunction, DecreasingStepFunction]
+    @functions = [ExponentialFunction.new, DecreasingStepFunction.new]
   end
   
   def build json
-    @function_classes.each do |f|
-      v = f.new.from_json json
+    @functions.each do |f|
+      v = f.from_json json
       return v if v
     end
     nil
