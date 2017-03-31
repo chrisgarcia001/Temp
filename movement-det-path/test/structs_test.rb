@@ -16,3 +16,8 @@ puts "\n----- Exponential Function Test ----------"
 
 puts "\n----- Decreasing Step Function Test ----------"
 [0, 2, 6, 12].map{|c| puts stepf.prob(c)}
+
+puts "\n----- Test JSON Generation ----------"
+puts expf.to_json
+puts stepf.to_json
+
