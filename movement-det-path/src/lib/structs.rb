@@ -123,14 +123,14 @@ end
 #                         2) A list of lists - each inner list contains a sequence of item footprints and
 #                            corresponds to a path.
 # @param path_prob_funcs: A list of SuccessProbFunctionBase instances, corresponding the the different paths.
-def objective_func solution, path_prob_funcs
+def objective_function solution, path_prob_funcs
   prob = 1
   cums = Array.new path_prob_funcs.length, 0
   if !solution.empty? and solution.first.class == [].class
     path_prob_funcs.each_with_index do |func, j|
       solution[j].each do |item_footprint|
         cums[j] += item_footprint
-        prob *= func(cums[j])
+        prob *= func.prob(cums[j])
       end
     end
   else

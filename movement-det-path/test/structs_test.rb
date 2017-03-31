@@ -1,7 +1,7 @@
 require '../src/lib/structs'
 
 expf_json = '{"prob_function":"ExponentialFunction", "base":0.87}'
-steps = '[{"cum_footprint":5,"p":95},{"cum_footprint":10,"p":82}]'
+steps = '[{"cum_footprint":5,"p":0.95},{"cum_footprint":10,"p":0.82}]'
 step_json = '{"prob_function":"DecreasingStepFunction", "steps":' + steps + '}'
 
 builder = ProbFunctionBuilder.new
@@ -21,3 +21,10 @@ puts "\n----- Test JSON Generation ----------"
 puts expf.to_json
 puts stepf.to_json
 
+
+puts "\n----- Test Objective Function ----------"
+paths = [expf, stepf]
+s1 = [[3,8],[4,5]]
+s2 = [Item.new(3,0), Item.new(8,0), Item.new(4,1), Item.new(5,1)]
+puts objective_function(s1, paths)
+puts objective_function(s2, paths)
