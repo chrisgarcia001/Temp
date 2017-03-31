@@ -134,7 +134,7 @@ def objective_function solution, path_prob_funcs
       end
     end
   else
-    solution.each do|item| 
+    solution.each do |item| 
       cums[item.path] += item.footprint
       prob *= path_prob_funcs[item.path].prob(cums[item.path])
     end
