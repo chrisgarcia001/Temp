@@ -33,9 +33,20 @@ module Util
     data
   end
   
+  # Cast a value to its proper type
+  def cast val
+    return val if val.include?('/') or val.include?('\\')
+    begin
+      return eval(val)
+    rescue 
+      'Cast Exception Handled'
+    end
+    val
+  end
+  
   # Reads in params from a CSV file with <name, value>
   # param format per line
-  def read_params csv_file, sym_keys = true
+  def read_params_old csv_file, sym_keys = true, autocast=true
     params = {}
     File.open(csv_file, "r") do |infile|
       while (line = infile.gets)
@@ -43,6 +54,7 @@ module Util
         key = par[0].downcase.split(' ').join('_')
         key = key.to_sym if sym_keys
         val = par[1]
+        val = cast(val) if autocast
         params[key] = val
       end
     end
@@ -51,7 +63,7 @@ module Util
   
   # Reads params where some contain an array of values. All
   # params that have only a single value will not be arrays.
-  def read_multivalue_params csv_file, sym_keys = true
+  def read_params csv_file, sym_keys = true, autocast=true
     params = {}
     File.open(csv_file, "r") do |infile|
       while (line = infile.gets)
@@ -59,7 +71,8 @@ module Util
         key = par[0].downcase.split(' ').join('_')
         key = key.to_sym if sym_keys
         val = par[1..par.length]
-        val = par[1] if val.select{|x| x != nil}.length < 2
+        val = val.map{|v| cast(v)} if autocast
+        val = val[0] if val.select{|x| x != nil}.length < 2
         params[key] = val
       end
     end
