@@ -124,7 +124,6 @@ class ProbFunctionBuilder
   end
 end
 
-
 # ----------------- This is the problem objective function ----------------------------------------------
 # @param solution: A list of items of form [item_footprint, assigned_path]
 # @param path_prob_funcs: A list of SuccessProbFunctionBase instances, corresponding the the different paths.
