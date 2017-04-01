@@ -40,7 +40,8 @@ module RandUtil
     vals
   end
   
-  def sample from, to, n
+  # Take a discrete sample in range [from, to]
+  def discrete_sample from, to, n
     samp = []
     range = (from..to).to_a
     while n > 0 and range.length > 0
@@ -50,8 +51,17 @@ module RandUtil
     samp
   end
   
+  # Take a continuous sample over the specified range.
+  def interval_sample from, to, n, round_digits=3
+    samp = []
+    1.upto(n){|i| samp << (rand * (to - from)) + from}
+    samp = samp.map{|i| i.round(round_digits)} if round_digits
+    samp
+  end
+  
   # Given an array of elements, get a random sample of n elements
   def sample_from arr, n
     sample(0, arr.length - 1, n).map{|i| arr[i]}
   end
+  
 end

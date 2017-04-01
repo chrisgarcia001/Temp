@@ -1,33 +1,25 @@
 require 'json'
 
-# ------------------ Item representation -------------------------------
-class Item
-  attr_accessor :footprint, :path
-  
-  def initialize footprint=nil, path = nil
-    @footprint = footprint
-    @path = path
-  end
-  
-  def to_a
-    [@footprint, @path]
-  end
-  
-  def clone
-    Item.new @footprint, @path
-  end
-end
-
 
 # ----------------- Base class for probability functions ----------
 class SuccessProbFunctionBase
-  # Returns the JSON as a hash
-  def to_json
+  # Returns true or false depending on whether this is successfully constructed from the given hash.
+  def from_h hash
+    'Implement Me!'
+  end
+  
+  # Returns a hash representation of this
+  def to_h
     'Implement Me!'
   end
     
-  # Returns true or false depending on whether this can be constructed from the given JSON
+  # Returns true or false depending on whether this is successfully constructed from the given JSON
   def from_json json
+    'Implement Me!'
+  end
+  
+  # Returns the JSON as a string
+  def to_json
     'Implement Me!'
   end
   
@@ -43,6 +35,16 @@ class ExponentialFunction < SuccessProbFunctionBase
   
   def initialize base=nil
     @base = base
+  end
+  
+  # Returns a hash representation of this
+  def to_h
+    {'prob_function' => 'ExponentialFunction', 'base' => @base}
+  end
+  
+  # Returns true or false depending on whether this is successfully constructed from the given hash.
+  def from_h hash
+    from_json(JSON.generate(hash))
   end
   
   # Returns the JSON as a hash
@@ -71,7 +73,7 @@ end
 # cumulative footprint range has its own lower probability of success for all values in range (previous level, current level]). 
 # Anything cumulative footprint beyond the last level results in probability of 0. 
 class DecreasingStepFunction < SuccessProbFunctionBase
-  # @steps is a list of the form [{:cum_footprint => f, :p => p} , {:cum_footprint => f, :p => p} , ...] where each increasing position
+  # @steps is a list of the form [{'cum_footprint' => f, 'p' => p} , {'cum_footprint' => f, 'p' => p}  , ...] where each increasing position
   # has higher cum_footprint and <= p. It is always assumed that P(0) = 1.
   attr_accessor :steps
   
@@ -79,9 +81,19 @@ class DecreasingStepFunction < SuccessProbFunctionBase
     @steps = steps
   end
   
+  # Returns true or false depending on whether this is successfully constructed from the given hash.
+  def from_h hash
+    from_json(JSON.generate(hash))
+  end
+  
+  # Returns a hash representation of this
+  def to_h
+    {'prob_function' => 'DecreasingStepFunction', 'steps' => @steps}
+  end
+  
   # Returns the JSON as a hash
   def to_json
-    JSON.generate({'prob_function' => 'DecreasingStepFunction', 'steps' => @steps})
+    JSON.generate(to_h)
   end
     
   # Returns true or false depending on whether this can be constructed from the given JSON
@@ -112,15 +124,61 @@ end
 # -----------------  Will construct and return the appropriate probability function from the JSON --------
 class ProbFunctionBuilder
   def initialize
-    @functions = [ExponentialFunction.new, DecreasingStepFunction.new]
+    @function_classes = [ExponentialFunction, DecreasingStepFunction]
   end
   
   def build json
-    @functions.each do |f|
-      v = f.from_json json
+    json = JSON.generate(json) if json.class != ''.class
+    @function_classes.each do |f|
+      v = f.new.from_json json
       return v if v
     end
     nil
+  end
+end
+
+# ------------------ Item representation -------------------------------
+class Item
+  attr_accessor :footprint, :path
+  
+  def initialize footprint=nil, path = nil
+    @footprint = footprint
+    @path = path
+  end
+  
+  def to_a
+    [@footprint, @path]
+  end
+  
+  def clone
+    Item.new @footprint, @path
+  end
+end
+
+# ------------------ Problem representation -------------------------------
+class Problem
+  attr_accessor :item_footprints, :path_funcs
+  
+  def initialize item_footprints=[], path_funcs=[]
+    @item_footprints = item_footprints
+    @path_funcs = path_funcs
+  end
+  
+  # Construct a JSON representation
+  def to_json
+    JSON.generate({'item_footprints' => @item_footprints, 'path_funcs' => @path_funcs.map{|f| f.to_h}})
+  end
+  
+  # Build a problem from a JSON representation. Returns this or false, if won't parse.
+  def from_json json
+    h = JSON.parse(json)
+    if h.has_key?('item_footprints')
+      @item_footprints = h['item_footprints']
+      builder = ProbFunctionBuilder.new
+      @path_funcs = h['path_funcs'].map{|f| builder.build(f)}
+      return self
+    end
+    false
   end
 end
 

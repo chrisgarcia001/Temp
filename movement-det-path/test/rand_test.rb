@@ -32,7 +32,11 @@ p (1..10).to_a.map{|x| rand_float(0.3, 0.5)}
 
 puts 'Bin Search'
 1.upto(20) do
-  a = sample(1, 100, 10).sort
-  i = sample(0,9,1)[0]
+  a = discrete_sample(1, 100, 10).sort
+  i = discrete_sample(0,9,1)[0]
   puts "i: #{i}, binsearch index: #{binary_search(a, a[i]){|x| x}}"
 end
+
+puts 'Interval sample'
+p interval_sample(5,10,15).sort
+p interval_sample(3,5,20).sort
