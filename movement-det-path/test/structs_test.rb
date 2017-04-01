@@ -24,7 +24,10 @@ puts stepf.to_json
 
 puts "\n----- Test Objective Function ----------"
 paths = [expf, stepf]
-s1 = [[3,8],[4,5]]
-s2 = [Item.new(3,0), Item.new(8,0), Item.new(4,1), Item.new(5,1)]
+s1 = [[3,0], [8,0], [4,1], [5,1]]
+s2 = s1.map{|i| Item.new(*i)}
 puts objective_function(s1, paths)
-puts objective_function(s2, paths)
+puts objective_function(s1, paths)
+p s1
+p s2
+
