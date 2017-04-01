@@ -1,5 +1,7 @@
 require '../src/lib/structs'
 
+include Structs
+
 expf_json = '{"prob_function":"ExponentialFunction", "base":0.87}'
 steps = '[{"cum_footprint":5,"p":0.95},{"cum_footprint":10,"p":0.82}]'
 step_json = '{"prob_function":"DecreasingStepFunction", "steps":' + steps + '}'

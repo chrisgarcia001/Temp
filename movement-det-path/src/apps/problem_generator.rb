@@ -1,8 +1,9 @@
 require '../lib/util'
 require '../lib/rand_util'
-require '../lib/problem_gen'
 require '../lib/structs'
+require '../lib/problem_gen'
 
+include Structs
 include ProblemGen
 include Util
 

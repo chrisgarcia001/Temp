@@ -1,5 +1,6 @@
 include RandUtil
 include Util
+include Structs
 
 module ProblemGen
   # Generate a random exponential function.

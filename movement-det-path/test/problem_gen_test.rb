@@ -1,7 +1,7 @@
 require '../src/lib/rand_util'
 require '../src/lib/util'
-require '../src/lib/problem_gen'
 require '../src/lib/structs'
+require '../src/lib/problem_gen'
 
 include ProblemGen
 
