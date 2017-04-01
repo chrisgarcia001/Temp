@@ -44,24 +44,7 @@ module Util
     val
   end
   
-  # Reads in params from a CSV file with <name, value>
-  # param format per line
-  def read_params_old csv_file, sym_keys = true, autocast=true
-    params = {}
-    File.open(csv_file, "r") do |infile|
-      while (line = infile.gets)
-        par = line.delete("\n").split(',')
-        key = par[0].downcase.split(' ').join('_')
-        key = key.to_sym if sym_keys
-        val = par[1]
-        val = cast(val) if autocast
-        params[key] = val
-      end
-    end
-    params
-  end
-  
-  # Reads params where some contain an array of values. All
+  # Reads params from a file. Can handle cases where some params contain an array of values. All
   # params that have only a single value will not be arrays.
   def read_params csv_file, sym_keys = true, autocast=true
     params = {}
