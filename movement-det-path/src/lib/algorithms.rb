@@ -6,7 +6,7 @@ include RandUtil
 
 module OptimizationAlgorithms
   
-  # Provides an exact solution for small problems. Uses the all-partition methods.
+  # Provides an exact solution for small problems. Uses the all-partition method.
   def exact_solve problem
     start_time = Time.now
     items = problem.item_footprints.sort
@@ -45,7 +45,7 @@ module OptimizationAlgorithms
     end
   
   
-    # Mutate by randomly changing paths. Here, s is a sequence of Item objects
+    # Mutate by randomly changing paths. Here, s is a sequence of Item objects.
     def mutate s, num_paths
       b = s.map{|i| i.clone}
       b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= @mutation_rate}
