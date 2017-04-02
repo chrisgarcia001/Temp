@@ -24,7 +24,7 @@ module OptimizationAlgorithms
       @population_size = pop_size
       @crossover_rate = crossover_rate
       @mutation_rate = mutation_rate
-      @elitism = elitisms
+      @elitism = elitism
     end
     
     # Simple single-point crossover, where paths of items are swapped.
