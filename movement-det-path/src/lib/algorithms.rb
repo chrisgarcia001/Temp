@@ -48,7 +48,7 @@ module OptimizationAlgorithms
     # Mutate by randomly changing paths. Here, s is a sequence of Item objects.
     def mutate s, num_paths
       b = s.map{|i| i.clone}
-      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= @mutation_rate}
+      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= @mutation_rate and num_paths > 1}
       b
     end
     
