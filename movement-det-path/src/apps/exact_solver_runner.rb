@@ -34,7 +34,7 @@ Dir::foreach(input_dir) do |f|
     puts 'Solving Problem: ' + File.join(input_dir, f) 
     problem = Problem.new.from_json(read(File.join(input_dir, f)))
     sol = exact_solve(problem)
-    ofile = f.split('')[0, f.split('').length - 5].join('') + "-solution.json"
+    ofile = f.split('')[0, f.split('').length - 5].join('') + "-exact-solution.json"
     puts "Done! \nWriting File: " + ofile + ', Elapsed Time: ' + sol[:elapsed_time].to_s
     write(JSON.generate(sol), File.join(output_dir, ofile))
   end
