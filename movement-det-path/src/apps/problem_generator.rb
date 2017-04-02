@@ -1,3 +1,5 @@
+# This provides a problem generator based on the specified params. See the example.
+
 require '../lib/util'
 require '../lib/rand_util'
 require '../lib/structs'
@@ -21,8 +23,6 @@ rescue
   exit
 end
 
-#n, num_exp_funcs, num_step_funcs, item_footprint_range=[1, 10],
-#                   range_exp_const=[0.98, 0.99999], range_num_steps=[3,8]
 
 num_problems = params[:num_problems]
 num_items = params[:num_items]

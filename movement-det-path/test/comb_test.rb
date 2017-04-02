@@ -15,7 +15,7 @@ n = 10
 p powerset((1..n).to_a)
 
 # Test all_partitions
-n = 6
+n = 10
 pts = all_partitions((1..n).to_a, 3)
 p pts.length
 #pts.each{|pt| p pt}
