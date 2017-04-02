@@ -2,10 +2,11 @@ require 'pmap'
 
 include Structs
 include CombUtil
+include RandUtil
 
 module OptimizationAlgorithms
   
-  # Provide an exaxt solution for small problems. Uses the all-partition methods.
+  # Provides an exact solution for small problems. Uses the all-partition methods.
   def exact_solve problem
     start_time = Time.now
     items = problem.item_footprints.sort
@@ -26,13 +27,33 @@ module OptimizationAlgorithms
       @elitism = elitisms
     end
     
+    # Simple single-point crossover, where paths of items are swapped.
+    # Here, s1 and s2 are sequences of Item objects.
     def crossover s1, s2
-      if rand < @crossover_rate
-        0
-        # TODO: Implement!
+      b1, b2 = s1.map{|i| i.clone}, s2.map{|i| i.clone}
+      if rand <= @crossover_rate
+        point = rand_int(1, s1.length - 1)
+        0.upto(s1.length - 1) do |i|
+          if i < point
+            b2.path = s1.path
+          else
+            b1.path = s2.path
+          end
+        end
       end
-      [s1.clone, s2.clone]
+      [b1, b2]
     end
-  end
+  
+  
+    # Mutate by randomly changing paths. Here, s is a sequence of Item objects
+    def mutate s, num_paths
+      b = s.map{|i| i.clone}
+      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= @mutation_rate}
+      b
+    end
+    
+    # TODO: Finish implementing and debug!
+  
+  end # End GA
   
 end
