@@ -42,9 +42,9 @@ module OptimizationAlgorithms
         point = rand_int(1, s1.length - 1)
         0.upto(s1.length - 1) do |i|
           if i < point
-            b2.path = s1.path
+            b2[i].path = s1[i].path
           else
-            b1.path = s2.path
+            b1[i].path = s2[i].path
           end
         end
       end
@@ -61,8 +61,8 @@ module OptimizationAlgorithms
     
     # Check to see if termination conditions reached.
     def terminate?
-      if ((@max_time and @start_time and Time.now - @start_time >= @max_time) or
-          (@max_unimprove_time and @current_unimprove_time > @max_unimprove_time) or
+      if ((@max_time and @start_time and (Time.now - @start_time).to_i >= @max_time) or
+          (@max_unimprove_time and (Time.now - @current_unimprove_time).to_i > @max_unimprove_time) or
           (@max_iter and @current_iter >= @max_iter) or
           (@max_unimprove_iter and @current_unimprove_iter >= @max_unimprove_iter))
         return true
@@ -79,11 +79,6 @@ module OptimizationAlgorithms
       init_pop
     end
     
-    # Create a solution clone.
-    def copy solution
-      solution.map{|i| i.clone}
-    end
-    
     # GA solution method
     def solve problem
       @start_time = Time.now
@@ -95,30 +90,32 @@ module OptimizationAlgorithms
       best = nil
       while !terminate? do
         next_pop = []
-        evaluated_pop = population.map{|s| {:solution => s, :objective_func => objective_function(s)}}.sort{|x,y| x[:objective_func] <=> y[:objective_func]}
+        evaluated_pop = population.map{|s| {:solution => s, :objective_func => objective_function(s, problem.path_funcs)}}.sort{|x,y| x[:objective_func] <=> y[:objective_func]}
         if @elitism
-          next_pop = evaluated_pop.reverse[0..(@elitism * @population_size)].map{|x| copy(x[:solution])}
+          next_pop = evaluated_pop.reverse[0..(@elitism * @population_size)].map{|x| x[:solution].map{|i| i.clone}}
         end
         if best == nil or evaluated_pop.last[:objective_func] > best[:objective_func]
           @current_unimprove_time = Time.now
           @current_unimprove_iter = 0
           best = evaluated_pop.last 
         end
-        puts "  Iteration: #{@current_iter}, best objective function value: #{best[:objective_func]}, elapsed time: #{Time.now - @start_time}" + 
+        puts "  Iteration: #{@current_iter}: best objective function value = #{best[:objective_func]}, elapsed time = #{Time.now - @start_time} sec." 
         min_obj = evaluated_pop.map{|x| x[:objective_func]}.min
         evaluated_pop.each{|x| x[:fitness] = 0.00001 + ((x[:objective_func] / min_obj) - 1)}
         fits = evaluated_pop.map{|x| x[:fitness]}
         cum_fit = fits.reduce{|x,y| x + y}
         while next_pop.length < @population_size * (1.0 - @elitism) do
-          i1, i2 = roulette_wheel_select(rand_float(0,cum_fit), cum_fit), roulette_wheel_select(rand_float(0,cum_fit), cum_fit)
+          i1, i2 = roulette_wheel_select(fits, rand_float(0,cum_fit)), roulette_wheel_select(fits, rand_float(0,cum_fit))
           ns1, ns2 = crossover(evaluated_pop[i1][:solution], evaluated_pop[i1][:solution])
           next_pop << ns1
           next_pop << ns2
         end
+        next_pop = next_pop.map{|s| mutate(s, problem.path_funcs.length)}
         while next_pop.length < @population_size and !evaluated_pop.empty? do
           next_pop << evaluated_pop.pop[:solution]
         end
         population = next_pop
+        @current_iter += 1
       end
       best[:elapsed_time] = Time.now - @start_time
       best

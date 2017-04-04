@@ -61,7 +61,7 @@ module RandUtil
   
   # Given an array of elements, get a random sample of n elements
   def sample_from arr, n
-    sample(0, arr.length - 1, n).map{|i| arr[i]}
+    discrete_sample(0, arr.length - 1, n).map{|i| arr[i]}
   end
   
 end
