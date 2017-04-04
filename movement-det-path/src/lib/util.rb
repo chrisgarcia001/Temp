@@ -73,6 +73,16 @@ module Util
     end  
   end
   
+  # Converts a list of hashes having same form to a CSV file. Optionally takes a subset of keys in each hash as the columns.
+  def hashlist_to_csv hashlist, filename, columns=nil
+    colnames = []
+    colnames = hashlist[0].keys if !hashlist.empty?
+    colnames = columns if columns
+    data = [colnames.map{|x| x.to_s}]
+    hashlist.each{|h| v = []; colnames.each{|c| v << h[c]}; data << v}
+    to_generic_csv data, filename
+  end
+  
   # Pad a string with leading 0's
   def str_digitize(i, digits)
     s = i.to_s

@@ -1,0 +1,11 @@
+Param,Value(s)
+input_dir,../../data
+output_dir,../../output
+pop_size_multiplier,10
+max_time,20
+max_iter,1000
+max_unimprove_time,10
+max_unimprove_iter,100
+crossover_rate,0.7
+mutation_rate,0.01
+elitism,0.05

@@ -28,14 +28,17 @@ end
 
 input_dir = params[:input_dir]
 output_dir = params[:output_dir]
-
+solutions = []
 Dir::foreach(input_dir) do |f|
   if f =~ /.json$/
     puts 'Solving Problem: ' + File.join(input_dir, f) 
     problem = Problem.new.from_json(read(File.join(input_dir, f)))
     sol = exact_solve(problem)
+    sol[:problem_name] = f.split('')[0, f.split('').length - 5].join('')
     ofile = f.split('')[0, f.split('').length - 5].join('') + "-exact-solution.json"
     puts "Done! \nWriting File: " + ofile + ', Elapsed Time: ' + sol[:elapsed_time].to_s
     write(JSON.generate(sol), File.join(output_dir, ofile))
+    solutions << sol
   end
 end
+hashlist_to_csv solutions, File.join(output_dir, 'summary-exact.csv'), [:problem_name, :objective_func, :elapsed_time]

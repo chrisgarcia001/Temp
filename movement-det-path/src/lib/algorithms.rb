@@ -20,11 +20,18 @@ module OptimizationAlgorithms
   
   # Provides a GA implementation.
   class GeneticAlgorithm
-    def initialize pop_size, crossover_rate, mutation_rate, elitism
-      @population_size = pop_size
-      @crossover_rate = crossover_rate
-      @mutation_rate = mutation_rate
-      @elitism = elitism
+    def initialize params #pop_size, crossover_rate, mutation_rate, elitism
+      @input_dir = params[:input_dir]
+      @output_dir = params[:output_dir]
+      @pop_size_multiplier = params[:pop_size_multiplier]
+      @max_time = params[:max_time]
+      @max_iter = params[:max_iter]
+      @max_unimprove_time = params[:max_unimprove_time]
+      @max_unimprove_iter = params[:pax_unimprove_iter]
+      @crossover_rate = params[:crossover_rate]
+      @mutation_rate = params[:mutation_rate]
+      @elitism = params[:elitism]
+      @elitism = 0.0 if !@elitism
     end
     
     # Simple single-point crossover, where paths of items are swapped.
@@ -52,7 +59,70 @@ module OptimizationAlgorithms
       b
     end
     
-    # TODO: Finish implementing and debug!
+    # Check to see if termination conditions reached.
+    def terminate?
+      if ((@max_time and @start_time and Time.now - @start_time >= @max_time) or
+          (@max_unimprove_time and @current_unimprove_time > @max_unimprove_time) or
+          (@max_iter and @current_iter >= @max_iter) or
+          (@max_unimprove_iter and @current_unimprove_iter >= @max_unimprove_iter))
+        return true
+      end
+       false
+    end
+       
+    # Generate the initial population.
+    def initial_population problem
+      n = problem.path_funcs.length
+      @population_size = (@pop_size_multiplier * problem.item_footprints.length).to_i
+      init_pop = []
+      1.upto(@population_size){init_pop << problem.item_footprints.sort.map{|i| Item.new(i, rand_int(0, n - 1))}}
+      init_pop
+    end
+    
+    # Create a solution clone.
+    def copy solution
+      solution.map{|i| i.clone}
+    end
+    
+    # GA solution method
+    def solve problem
+      @start_time = Time.now
+      @current_iter = 1
+      @current_unimprove_time = Time.now
+      @current_unimprove_iter = 0
+      @population_size = -1
+      population = initial_population(problem)
+      best = nil
+      while !terminate? do
+        next_pop = []
+        evaluated_pop = population.map{|s| {:solution => s, :objective_func => objective_function(s)}}.sort{|x,y| x[:objective_func] <=> y[:objective_func]}
+        if @elitism
+          next_pop = evaluated_pop.reverse[0..(@elitism * @population_size)].map{|x| copy(x[:solution])}
+        end
+        if best == nil or evaluated_pop.last[:objective_func] > best[:objective_func]
+          @current_unimprove_time = Time.now
+          @current_unimprove_iter = 0
+          best = evaluated_pop.last 
+        end
+        puts "  Iteration: #{@current_iter}, best objective function value: #{best[:objective_func]}, elapsed time: #{Time.now - @start_time}" + 
+        min_obj = evaluated_pop.map{|x| x[:objective_func]}.min
+        evaluated_pop.each{|x| x[:fitness] = 0.00001 + ((x[:objective_func] / min_obj) - 1)}
+        fits = evaluated_pop.map{|x| x[:fitness]}
+        cum_fit = fits.reduce{|x,y| x + y}
+        while next_pop.length < @population_size * (1.0 - @elitism) do
+          i1, i2 = roulette_wheel_select(rand_float(0,cum_fit), cum_fit), roulette_wheel_select(rand_float(0,cum_fit), cum_fit)
+          ns1, ns2 = crossover(evaluated_pop[i1][:solution], evaluated_pop[i1][:solution])
+          next_pop << ns1
+          next_pop << ns2
+        end
+        while next_pop.length < @population_size and !evaluated_pop.empty? do
+          next_pop << evaluated_pop.pop[:solution]
+        end
+        population = next_pop
+      end
+      best[:elapsed_time] = Time.now - @start_time
+      best
+    end
   
   end # End GA
   
