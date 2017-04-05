@@ -104,13 +104,11 @@ module OptimizationAlgorithms
         evaluated_pop.each{|x| x[:fitness] = 0.00001 + ((x[:objective_func] / min_obj) - 1)}
         fits = evaluated_pop.map{|x| x[:fitness]}
         cum_fit = fits.reduce{|x,y| x + y}
-        while next_pop.length < @population_size * (1.0 - @elitism) do
+        next_pop += (1..(@population_size * (1.0 - @elitism)).ceil).to_a.pmap do |i|
           i1, i2 = roulette_wheel_select(fits, rand_float(0,cum_fit)), roulette_wheel_select(fits, rand_float(0,cum_fit))
-          ns1, ns2 = crossover(evaluated_pop[i1][:solution], evaluated_pop[i1][:solution])
-          next_pop << ns1
-          next_pop << ns2
-        end
-        next_pop = next_pop.map{|s| mutate(s, problem.path_funcs.length)}
+          crossover(evaluated_pop[i1][:solution], evaluated_pop[i1][:solution])
+        end.reduce{|x,y| x + y}
+        next_pop = next_pop.pmap{|s| mutate(s, problem.path_funcs.length)}
         while next_pop.length < @population_size and !evaluated_pop.empty? do
           next_pop << evaluated_pop.pop[:solution]
         end
