@@ -18,6 +18,23 @@ module OptimizationAlgorithms
     opt
   end
   
+  # A greedy algorithm which provides fast but not necessarily optimal solutions.
+  def greedy_solve problem
+    start_time = Time.now
+    items = problem.item_footprints.sort
+    current = []
+    items.each do |footprint|
+      cands = (0..problem.path_funcs.length - 1).to_a.map do |path|
+        c = current.map{|i| i.clone}
+        c << Item.new(footprint, path)
+        c
+      end.map{|s| {:solution => s, :objective_func => objective_function(s, problem.path_funcs)}}
+      current = cands.reduce{|x,y| x[:objective_func] > y[:objective_func] ? x : y}[:solution]
+    end
+    {:solution => current, :objective_func => objective_function(current, problem.path_funcs), 
+     :elapsed_time => Time.now - start_time}
+  end
+  
   # Provides a GA implementation.
   class GeneticAlgorithm
     def initialize params #pop_size, crossover_rate, mutation_rate, elitism
