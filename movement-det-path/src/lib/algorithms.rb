@@ -90,9 +90,9 @@ module OptimizationAlgorithms
       best = nil
       while !terminate? do
         next_pop = []
-        evaluated_pop = population.map{|s| {:solution => s, :objective_func => objective_function(s, problem.path_funcs)}}.sort{|x,y| x[:objective_func] <=> y[:objective_func]}
+        evaluated_pop = population.pmap{|s| {:solution => s, :objective_func => objective_function(s, problem.path_funcs)}}.sort{|x,y| x[:objective_func] <=> y[:objective_func]}
         if @elitism
-          next_pop = evaluated_pop.reverse[0..(@elitism * @population_size)].map{|x| x[:solution].map{|i| i.clone}}
+          next_pop = evaluated_pop.reverse[0..(@elitism * @population_size)].pmap{|x| x[:solution].map{|i| i.clone}}
         end
         if best == nil or evaluated_pop.last[:objective_func] > best[:objective_func]
           @current_unimprove_time = Time.now
@@ -100,9 +100,9 @@ module OptimizationAlgorithms
           best = evaluated_pop.last 
         end
         puts "  Iteration: #{@current_iter}: best objective function value = #{best[:objective_func]}, elapsed time = #{Time.now - @start_time} sec." 
-        min_obj = evaluated_pop.map{|x| x[:objective_func]}.min
-        evaluated_pop.each{|x| x[:fitness] = 0.00001 + ((x[:objective_func] / min_obj) - 1)}
-        fits = evaluated_pop.map{|x| x[:fitness]}
+        min_obj = evaluated_pop.pmap{|x| x[:objective_func]}.min
+        evaluated_pop.peach{|x| x[:fitness] = 0.00001 + ((x[:objective_func] / min_obj) - 1)}
+        fits = evaluated_pop.pmap{|x| x[:fitness]}
         cum_fit = fits.reduce{|x,y| x + y}
         next_pop += (1..(@population_size * (1.0 - @elitism)).ceil).to_a.pmap do |i|
           i1, i2 = roulette_wheel_select(fits, rand_float(0,cum_fit)), roulette_wheel_select(fits, rand_float(0,cum_fit))
