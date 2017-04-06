@@ -9,3 +9,4 @@ max_unimprove_iter,100
 crossover_rate,0.7
 mutation_rate,0.02
 elitism,0.05
+alg_name,ga
