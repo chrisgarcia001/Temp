@@ -1,7 +1,7 @@
 Param,Value(s)
 input_dir,../../data/calibration
 output_dir,../../output/calibration
-pop_size_multiplier,100
+pop_size_multiplier,10
 max_time,20
 max_iter,10000
 max_unimprove_time,60
