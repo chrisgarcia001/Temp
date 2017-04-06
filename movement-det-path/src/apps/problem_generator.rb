@@ -32,13 +32,14 @@ range_item_footprint = params[:range_item_footprint]
 range_exp_const = params[:range_exp_const]
 range_num_steps = params[:range_num_steps]
 problem_class_name = params[:problem_class_name]
+step_floor = params[:step_floor] || 0.0
 output_dir = params[:output_dir]
 
 1.upto(num_problems) do |i|
   prob_name = problem_class_name + '_' + i.to_s
   puts 'Generating ' + prob_name + '...'
   prob = rand_problem(num_items, num_exp_paths, num_step_paths, range_item_footprint, 
-                      range_exp_const, range_num_steps)
+                      range_exp_const, range_num_steps, step_floor)
   ofile = File.join(output_dir, prob_name + ".json")
   puts 'Outputting File: ' + ofile + '...'        
   write(prob.to_json, ofile)

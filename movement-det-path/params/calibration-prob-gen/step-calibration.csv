@@ -3,8 +3,9 @@ num_problems,20,
 num_items,200,
 num_exp_paths,0,
 num_step_paths,10,
-range_exp_const,0.8,0.999
+range_exp_const,0.999,0.99999
 range_num_steps,5,10
 range_item_footprint,1,50
-problem_class_name,step,
+step_floor,0.99,
+problem_class_name,both,
 output_dir,../../data/calibration,
