@@ -50,13 +50,15 @@ module Util
     params = {}
     File.open(csv_file, "r") do |infile|
       while (line = infile.gets)
-        par = line.delete("\n").split(',')
-        key = par[0].downcase.split(' ').join('_')
-        key = key.to_sym if sym_keys
-        val = par[1..par.length]
-        val = val.map{|v| cast(v)} if autocast
-        val = val[0] if val.select{|x| x != nil}.length < 2
-        params[key] = val
+        if !['#', nil, ''].member? line.strip.split('')[0]
+          par = line.delete("\n").split(',')
+          key = par[0].downcase.split(' ').join('_')
+          key = key.to_sym if sym_keys
+          val = par[1..par.length]
+          val = val.map{|v| cast(v)} if autocast
+          val = val[0] if val.select{|x| x != nil}.length < 2
+          params[key] = val
+        end
       end
     end
     params
