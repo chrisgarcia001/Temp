@@ -1,6 +1,6 @@
 Param,Value(s)
-input_dir,../../data
-output_dir,../../output
+input_dir,../../data/calibration
+output_dir,../../output/calibration
 pop_size_multiplier,100
 max_time,20
 max_iter,10000
