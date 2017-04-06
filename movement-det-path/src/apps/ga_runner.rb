@@ -38,7 +38,7 @@ Dir::foreach(input_dir) do |f|
     sol[:problem_name] = f.split('')[0, f.split('').length - 5].join('')
     ofile = "#{alg_name}-" + f.split('')[0, f.split('').length - 5].join('') + ".json"
     puts "Done! \nWriting File: " + ofile + ', Elapsed Time: ' + sol[:elapsed_time].to_s
-    h.delete(:fitness)
+    sol.delete(:fitness)
     write(JSON.generate(sol), File.join(output_dir, ofile))
     solutions << sol
   end
