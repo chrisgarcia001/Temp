@@ -1,5 +1,7 @@
 # A library of combinatorial and set algorithms.
 
+require 'pmap'
+
 module CombUtil
   
   # Generate the power set for the list of items.
@@ -41,7 +43,7 @@ module CombUtil
   def all_partitions items, num_groups
     return [[]] if items.empty?
     rest_partitons = all_partitions(items.last(items.length - 1), num_groups)
-    (0..(num_groups - 1)).to_a.map{|g| rest_partitons.map{|part| [[items.first, g]] + part}}.reduce{|x,y| x + y}
+    (0..(num_groups - 1)).to_a.pmap{|g| rest_partitons.map{|part| [[items.first, g]] + part}}.reduce{|x,y| x + y}
   end
   
 end
