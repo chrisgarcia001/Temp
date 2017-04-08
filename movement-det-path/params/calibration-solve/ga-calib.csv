@@ -4,7 +4,7 @@ output_dir,../../output/calibration
 pop_size_multiplier,100
 max_time,600
 max_iter,10000
-max_unimprove_time,60
+max_unimprove_time,20
 max_unimprove_iter,20
 crossover_rate,0.7
 mutation_rate,0.02
