@@ -47,8 +47,9 @@ module OptimizationAlgorithms
       @max_unimprove_iter = params[:pax_unimprove_iter]
       @crossover_rate = params[:crossover_rate]
       @mutation_rate = params[:mutation_rate]
-      @elitism = params[:elitism]
-      @elitism = 0.0 if !@elitism
+      @elitism = params[:elitism] || 0.0
+      @greedy_seed_proportion = params[:greedy_seed_proportion] || 0.0
+      @greedy_mutation_rate = params[:greedy_mutation_rate] || 0.0
     end
     
     # Simple single-point crossover, where paths of items are swapped.
@@ -70,9 +71,9 @@ module OptimizationAlgorithms
   
   
     # Mutate by randomly changing paths. Here, s is a sequence of Item objects.
-    def mutate s, num_paths
+    def mutate s, num_paths, mut_rate
       b = s.map{|i| i.clone}
-      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= @mutation_rate and num_paths > 1}
+      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= mut_rate and num_paths > 1}
       b
     end
     
@@ -92,7 +93,17 @@ module OptimizationAlgorithms
       n = problem.path_funcs.length
       @population_size = (@pop_size_multiplier * problem.item_footprints.length).to_i
       init_pop = []
-      1.upto(@population_size){init_pop << problem.item_footprints.sort.map{|i| Item.new(i, rand_int(0, n - 1))}}
+      gs = greedy_solve(problem)[:solution]
+      1.upto((@greedy_seed_proportion * @population_size) - 1) do |s|
+        if s == 1
+          init_pop << gs
+        else
+          init_pop << mutate(gs, problem.path_funcs.length, @greedy_mutation_rate)
+        end
+      end
+      while init_pop.length < @population_size do
+        init_pop << problem.item_footprints.sort.map{|i| Item.new(i, rand_int(0, n - 1))}
+      end
       init_pop
     end
     
@@ -115,6 +126,10 @@ module OptimizationAlgorithms
           @current_unimprove_time = Time.now
           @current_unimprove_iter = 0
           best = evaluated_pop.last 
+          if best[:objective_func] == 1.0
+            best[:elapsed_time] = Time.now - @start_time
+            return best
+          end
         end
         puts "  Iteration: #{@current_iter}: best objective function value = #{best[:objective_func]}, elapsed time = #{Time.now - @start_time} sec." 
         min_obj = evaluated_pop.pmap{|x| x[:objective_func]}.min
@@ -125,7 +140,7 @@ module OptimizationAlgorithms
           i1, i2 = roulette_wheel_select(fits, rand_float(0,cum_fit)), roulette_wheel_select(fits, rand_float(0,cum_fit))
           crossover(evaluated_pop[i1][:solution], evaluated_pop[i1][:solution])
         end.reduce{|x,y| x + y}
-        next_pop = next_pop.pmap{|s| mutate(s, problem.path_funcs.length)}
+        next_pop = next_pop.pmap{|s| mutate(s, problem.path_funcs.length, @mutation_rate)}
         while next_pop.length < @population_size and !evaluated_pop.empty? do
           next_pop << evaluated_pop.pop[:solution]
         end
