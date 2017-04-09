@@ -1,8 +1,8 @@
 Param,Value(s),
 num_problems,5,
-num_items,15,
+num_items,20,
 num_exp_paths,1,
-num_step_paths,2,
+num_step_paths,1,
 range_exp_const,0.999,0.99999
 range_num_steps,3,8
 step_floor,0.99,
