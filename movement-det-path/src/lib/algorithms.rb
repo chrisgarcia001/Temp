@@ -126,8 +126,9 @@ module OptimizationAlgorithms
           @current_unimprove_time = Time.now
           @current_unimprove_iter = 0
           best = evaluated_pop.last 
+          best[:best_find_time] = Time.now - @start_time
           if best[:objective_func] == 1.0
-            best[:elapsed_time] = Time.now - @start_time
+            best[:elapsed_time] = best[:best_find_time]
             return best
           end
         end

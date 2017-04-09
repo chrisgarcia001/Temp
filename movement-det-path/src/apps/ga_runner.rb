@@ -43,4 +43,5 @@ Dir::foreach(input_dir) do |f|
     solutions << sol
   end
 end
-hashlist_to_csv solutions, File.join(output_dir, "summary-#{alg_name}.csv"), [:problem_name, :objective_func, :elapsed_time]
+hashlist_to_csv(solutions, File.join(output_dir, "summary-#{alg_name}.csv"), 
+                [:problem_name, :objective_func, :best_find_time, :elapsed_time])
