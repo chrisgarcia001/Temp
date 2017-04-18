@@ -21,12 +21,12 @@ module ProblemGen
   
   # Generate a random problem.
   def rand_problem(n, num_exp_funcs, num_step_funcs, range_item_footprint=[1, 10],
-                   range_exp_const=[0.98, 0.99999], range_num_steps=[3,8], step_floor = 0.0)
+                   range_exp_const=[0.98, 0.99999], range_num_steps=[3,8], step_floor = 0.0, max_total_footprint_frac = 1.0)
     items = (1..n).map{|i| rand_float(*range_item_footprint)}
     total_footprint = items.reduce{|x,y| x + y}
     prob_funcs = []
     1.upto(num_exp_funcs){prob_funcs << rand_exponential_func(*range_exp_const)}
-    1.upto(num_step_funcs){prob_funcs << rand_step_func(*([total_footprint] + range_num_steps + [step_floor]))}
+    1.upto(num_step_funcs){prob_funcs << rand_step_func(*([total_footprint * max_total_footprint_frac] + range_num_steps + [step_floor]))}
     Problem.new items, prob_funcs
   end
 end
