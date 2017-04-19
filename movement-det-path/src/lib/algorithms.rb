@@ -35,6 +35,49 @@ module OptimizationAlgorithms
      :elapsed_time => Time.now - start_time}
   end
   
+  # Mutate by randomly changing paths. Here, s is a sequence of Item objects.
+  def mutate s, num_paths, mut_rate
+    b = s.map{|i| i.clone}
+    b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= mut_rate and num_paths > 1}
+    b
+  end
+  
+  # Perform a local search, starting with the greedy output.
+  def local_search(problem, max_iterations, max_unimprove_iterations, max_time, 
+                   max_unimprove_time, mut_rate, report_time_interval = 2)
+    best = greedy_solve(problem)[:solution]
+    best_find_time = 0
+    iter = 1
+    unimprove_iter = 1
+    unimprove_start_time = Time.now
+    last_improve_time = Time.now
+    start_time = Time.now
+    last_rep_time = Time.now
+    while ((iter <= max_iterations) and (unimprove_iter <= max_unimprove_iterations) and
+           ((Time.now - start_time).to_i <= max_time) and 
+           ((Time.now - last_improve_time).to_i <= max_unimprove_time)) do
+      nxt = mutate(best, problem.path_funcs.length, mut_rate) 
+      if objective_function(nxt, problem.path_funcs) > objective_function(best, problem.path_funcs)    
+        unimprove_start_time = Time.now
+        last_improve_time = Time.now
+        unimprove_iter = 1
+        best = nxt
+        best_find_time = Time.now - start_time
+      else
+        unimprove_iter += 1
+      end
+      iter += 1
+      if (Time.now - last_rep_time).to_i >= report_time_interval
+        msg = "Iteration = #{iter}, Obj = #{objective_function(best, problem.path_funcs)}, "
+        msg += "Elapsed Time = #{Time.now - start_time}"
+        puts msg
+        last_rep_time = Time.now
+      end
+    end
+    {:solution => best, :objective_func => objective_function(best, problem.path_funcs), 
+     :elapsed_time => Time.now - start_time, :best_find_time => best_find_time}
+  end
+  
   # Provides a GA implementation.
   class GeneticAlgorithm
     def initialize params #pop_size, crossover_rate, mutation_rate, elitism
@@ -44,7 +87,7 @@ module OptimizationAlgorithms
       @max_time = params[:max_time]
       @max_iter = params[:max_iter]
       @max_unimprove_time = params[:max_unimprove_time]
-      @max_unimprove_iter = params[:pax_unimprove_iter]
+      @max_unimprove_iter = params[:max_unimprove_iter]
       @crossover_rate = params[:crossover_rate]
       @mutation_rate = params[:mutation_rate]
       @elitism = params[:elitism] || 0.0
@@ -67,14 +110,6 @@ module OptimizationAlgorithms
         end
       end
       [b1, b2]
-    end
-  
-  
-    # Mutate by randomly changing paths. Here, s is a sequence of Item objects.
-    def mutate s, num_paths, mut_rate
-      b = s.map{|i| i.clone}
-      b.each{|i| i.path = sample_from((0..(num_paths - 1)).to_a - [i.path], 1)[0] if rand <= mut_rate and num_paths > 1}
-      b
     end
     
     # Check to see if termination conditions reached.
