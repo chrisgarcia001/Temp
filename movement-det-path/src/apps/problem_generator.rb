@@ -33,6 +33,7 @@ range_exp_const = params[:range_exp_const]
 range_num_steps = params[:range_num_steps]
 problem_class_name = params[:problem_class_name]
 step_floor = params[:step_floor] || 0.0
+max_total_footprint_frac = params[:max_total_footprint_frac] || 1.0
 output_dir = params[:output_dir]
 
 1.upto(num_problems) do |i|

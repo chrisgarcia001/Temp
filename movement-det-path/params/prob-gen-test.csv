@@ -7,5 +7,6 @@ range_exp_const,0.999,0.99999
 range_num_steps,3,8
 step_floor,0.99,
 range_item_footprint,1,15
+max_total_footprint_frac,0.85,
 problem_class_name,test,
 output_dir,../../data,
