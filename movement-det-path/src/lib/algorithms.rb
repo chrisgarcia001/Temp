@@ -53,9 +53,10 @@ module OptimizationAlgorithms
     last_improve_time = Time.now
     start_time = Time.now
     last_rep_time = Time.now
-    while ((iter <= max_iterations) and (unimprove_iter <= max_unimprove_iterations) and
-           ((Time.now - start_time).to_i <= max_time) and 
-           ((Time.now - last_improve_time).to_i <= max_unimprove_time)) do
+    while ((!max_iterations || iter <= max_iterations) and 
+           (!max_unimprove_iterations || unimprove_iter <= max_unimprove_iterations) and
+           (!max_time || (Time.now - start_time).to_i <= max_time) and 
+           (!max_unimprove_time || (Time.now - last_improve_time).to_i <= max_unimprove_time)) do
       nxt = mutate(best, problem.path_funcs.length, mut_rate) 
       if objective_function(nxt, problem.path_funcs) > objective_function(best, problem.path_funcs)    
         unimprove_start_time = Time.now
