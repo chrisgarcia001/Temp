@@ -127,7 +127,7 @@ module OptimizationAlgorithms
     # Generate the initial population.
     def initial_population problem
       n = problem.path_funcs.length
-      @population_size = (@pop_size_multiplier * problem.item_footprints.length).to_i
+      @population_size = (@pop_size_multiplier * problem.item_footprints.length * problem.path_funcs.length).to_i
       init_pop = []
       gs = greedy_solve(problem)[:solution]
       1.upto((@greedy_seed_proportion * @population_size) - 1) do |s|
