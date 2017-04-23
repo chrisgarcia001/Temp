@@ -1,0 +1,12 @@
+Param,LE,
+num_problems,20,
+num_items,100,
+num_exp_paths,10,
+num_step_paths,0,
+range_exp_const,0.95,0.999
+range_num_steps,5,15
+range_item_footprint,1,10
+step_floor,0.97,
+problem_class_name,LE,
+max_total_footprint_frac,0.85,
+output_dir,../../data/experiment,
