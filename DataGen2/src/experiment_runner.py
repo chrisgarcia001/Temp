@@ -27,28 +27,65 @@ class DataGenerator:
 		self.num_resources = to_int(sum(self.raw_resources))
 		self.available_resources = self.raw_resources 
 	
+	# Gets a list of task lists, corresponding to tasks in each shift.
+	# E.g. [[t1, t2, t3], [t4, t5, t6], ...]
+	def get_tasks_by_shift(self):
+		shifts = []
+		last_task = 0
+		while len(shifts) < self.num_shifts:
+			shifts.append(range(last_task, last_task + self.tps))
+			last_task += self.tps
+		return shifts
+
+	# Each array position is a task, and the corresponding value is the shift.
+	def task_shift_map(self):
+		tasks = []
+		for shift in range(self.num_shifts):
+			for i in range(self.tps):
+				tasks.append(shift)
+		return tasks
+		
+	
+	# Returns a list of indices of dummy tasks for each shift. 
+	# Simply designated as first shift in each task.
+	def get_dummy_task_indices(self):
+		return map(lambda x: x[0], self.get_tasks_by_shift())
+		
+	
 	# This is u[j][j']. Needs to be added to each resource for u[i][j][j'].
 	def build_task_conflict_matrix(self):
 		tps = self.tps
 		spd = self.spd
 		days = self.days
 		min_shifts_off = int(self.params['min shifts off between tasks'])
-		num_shifts = int(spd * days)
-		num_tasks = tps * num_shifts
-		block_size = tps * (1 + min_shifts_off)
-		matrix = dim_matrix(num_tasks, num_tasks, 0)
-		curr_row = 0
-		curr_col = 0
-		for i in range(num_shifts):
-			for j in range(tps):
-				for k in range(curr_col, min(curr_col + block_size, len(matrix))):
-					matrix[curr_row][k] = 1
-				curr_row += 1			
-			curr_col += tps
+		#num_shifts = int(spd * days)
+		#num_tasks = tps * num_shifts
+		#block_size = tps * (1 + min_shifts_off)
+		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)
+		# curr_row = 0
+		# curr_col = 0
+		# for i in range(num_shifts):
+			# for j in range(tps):
+				# for k in range(curr_col, min(curr_col + block_size, len(matrix))):
+					# matrix[curr_row][k] = 1
+				# curr_row += 1			
+			# curr_col += tps
+			
+		shifts = self.get_tasks_by_shift()
+		dummies = self.get_dummy_task_indices()
+		
+		for s in range(len(shifts)):
+			shift_range = shifts[s:min(s + 1 + min_shifts_off, len(shifts))]
+			block = reduce(lambda x,y: x + y, shift_range)
+			for t in shifts[s]:
+				for b in (shifts[s] if t in dummies else block):
+					matrix[t][b] = 1	
+			
 		for i in range(len(matrix)):
 			for j in range(len(matrix)):
 				if matrix[i][j] == 1:
 					matrix[j][i] = 1
+		
 		for i in range(len(matrix)):
 			matrix[i][i] = 0
 		return matrix

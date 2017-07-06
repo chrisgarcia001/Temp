@@ -14,37 +14,45 @@ def mpp(matrix):
 params = read_params(param_path, True)
 dg = DataGenerator(params)
 
+
+
+print('Tasks by Shift')
+mpp(dg.get_tasks_by_shift())
+
+print('Task Shift Map')
+mpp(dg.task_shift_map())
+
 print('Task Conflict Matrix')
 mpp(dg.build_task_conflict_matrix())
 
-print('\nShortage Cost Matrix')
-mpp(dg.build_shortage_weight_matrix())
+# print('\nShortage Cost Matrix')
+# mpp(dg.build_shortage_weight_matrix())
 
-print('\nResource-Type Matrix')
-mpp(dg.build_resource_type_matrix())
+# print('\nResource-Type Matrix')
+# mpp(dg.build_resource_type_matrix())
 
-print('\nAvailability Matrix')
-mpp(dg.build_availability_matrix())
+# print('\nAvailability Matrix')
+# mpp(dg.build_availability_matrix())
 
-print('\nDependency Ratio Matrix')
-mpp(dg.build_dependency_matrix())
+# print('\nDependency Ratio Matrix')
+# mpp(dg.build_dependency_matrix())
 
-print('\nInitial Demand Matrix')
-init_demand = dg.build_initial_demand_matrix()
-mpp(init_demand)
+# print('\nInitial Demand Matrix')
+# init_demand = dg.build_initial_demand_matrix()
+# mpp(init_demand)
 
-print('\nUpdated Demand Matrix')
-mpp(dg.build_updated_demand_matrix(init_demand))
+# print('\nUpdated Demand Matrix')
+# mpp(dg.build_updated_demand_matrix(init_demand))
 
-print('\nInitial Problem')
-init_data = dg.build_initial_data()
-#print(init_data['text'])
+# print('\nInitial Problem')
+# init_data = dg.build_initial_data()
+# print(init_data['text'])
 
-print('\nUpdated Problem')
-#print(dg.build_updated_data(init_data, init_data['y'])['text'])
+# print('\nUpdated Problem')
+# print(dg.build_updated_data(init_data, init_data['y'])['text'])
 
-# --- Test ProblemExecutor.
+#--- Test ProblemExecutor.
 ex = ProblemExecutor(param_path)
-#ex.solve_instance(1)
+ex.solve_instance(1)
 
-ex.solve_problem_set()
+#ex.solve_problem_set()
