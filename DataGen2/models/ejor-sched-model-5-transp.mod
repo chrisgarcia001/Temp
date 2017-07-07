@@ -3,6 +3,10 @@
  * Author: cgarcia
  * Creation Date: Sep 23, 2016 at 1:48:23 PM
  *********************************************/
+ 
+  execute PARAMS {
+   cplex.tilim = 600; // time limit in seconds
+ }
 
  // ------------- I. MODEL INPUTS: --------------------
  int numResourceTypes = ...;
