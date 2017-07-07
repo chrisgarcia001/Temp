@@ -48,6 +48,10 @@ def matrix_index_tuples(rows, columns):
 			t.append((i,j))
 	return t
 
+# Generate a random float in the interval (lower_bound, upper_bound).	
+def random_float(lower_bound, upper_bound):
+	return lower_bound + (rnd.random() * (upper_bound - lower_bound))
+
 # Generate row index tuples covering the specified row and columns.	
 def row_index_tuples(row, num_columns):
 	t = []

@@ -89,8 +89,16 @@ class DataGenerator:
 	# 2) Otherwise, each task in shift t has nonzero cost to each non-dummy task in shift t+1.
 	def build_transp_cost_matrix(self):
 		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)
-		
-		
+		lb, ub = 0, 0
+		if self.params.has_key('transportation cost range'):
+			lb, ub = tuple(self.params['transportation cost range'])
+		shifts = self.get_tasks_by_shift()
+		dummies = self.get_dummy_task_indices()
+		for s in range(len(shifts) - 1):
+			for i in shifts[s]:
+				for j in shifts[s + 1]:
+					matrix[i][j] = 0 if j in dummies else random_float(lb, ub)
+		return matrix
 		
 	# This is rij.	
 	def build_resource_type_matrix(self):
@@ -152,6 +160,10 @@ class DataGenerator:
 				a = max(1,int(min_perc * self.available_resources[j]))
 				b = math.ceil(max_perc * self.available_resources[j])
 				matrix[j][k] = rnd.randint(a, b)
+		dummies = self.get_dummy_task_indices()
+		for i in range(self.num_resource_types):
+			for j in dummies:
+				matrix[i][j] = 0
 		return matrix
 	
 	# This is the updated D[j][k].	
@@ -163,7 +175,12 @@ class DataGenerator:
 	# This is L[j][k].
 	def build_upper_limit_matrix(self, demand_matrix):
 		perc = self.params['upper limit resource percent of demand']
-		return map(lambda i: map(lambda j: perc * j, i), demand_matrix)
+		matrix = map(lambda i: map(lambda j: perc * j, i), demand_matrix)
+		dummies = self.get_dummy_task_indices()
+		for j in range(self.num_resource_types):
+			for k in dummies:
+				matrix[j][k] = 10 * self.num_resources
+		return matrix
 
 	# Build the initial set of data (i.e. prior to condition changes).
 	def build_initial_data(self):
@@ -181,10 +198,13 @@ class DataGenerator:
 			 'numResourceTypes':self.num_resource_types,
 			 'numTasks':self.num_tasks,
 			 'L':self.build_upper_limit_matrix(demand),
-			 'B':self.build_benefit_vector()}
+			 'B':self.build_benefit_vector(),
+			 'numShifts':self.num_shifts,
+			 'c':self.build_transp_cost_matrix(),
+			 'E':self.build_E_matrix()}
 
-		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'r', 'D',
-		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B']
+		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'numShifts', 'r', 'D',
+		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E']
 		text = ''
 		for key in ordered_keys:
 			text += str(key) + ' = ' + str(h[key]) + ";\n"
@@ -200,8 +220,8 @@ class DataGenerator:
 		h['L'] = self.build_upper_limit_matrix(h['D'])
 		h['mP'] = dim_matrix(self.num_resources, self.num_tasks, self.params['move to cost'])
 		h['mM'] = dim_matrix(self.num_resources, self.num_tasks, self.params['move away cost'])
-		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'r', 'D',
-		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B']
+		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'numShifts', 'r', 'D',
+		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E']
 		text = ''
 		for key in ordered_keys:
 			text += str(key) + ' = ' + str(h[key]) + ";\n"

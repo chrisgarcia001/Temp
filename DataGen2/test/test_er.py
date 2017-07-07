@@ -14,8 +14,13 @@ def mpp(matrix):
 params = read_params(param_path, True)
 dg = DataGenerator(params)
 
+# print('Random test')
+# for i in range(10):
+	# print(random_float(5, 10))
 
-
+print('Dummy Tasks')
+mpp(dg.get_dummy_task_indices())
+	
 print('Tasks by Shift')
 mpp(dg.get_tasks_by_shift())
 
@@ -24,6 +29,12 @@ mpp(dg.task_shift_map())
 
 print('Task Conflict Matrix')
 mpp(dg.build_task_conflict_matrix())
+
+print('E Matrix')
+mpp(dg.build_E_matrix())
+
+print('Transportation Cost Matrix')
+mpp(dg.build_transp_cost_matrix())
 
 # print('\nShortage Cost Matrix')
 # mpp(dg.build_shortage_weight_matrix())
