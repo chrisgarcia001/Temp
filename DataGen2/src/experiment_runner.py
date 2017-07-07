@@ -58,38 +58,39 @@ class DataGenerator:
 		spd = self.spd
 		days = self.days
 		min_shifts_off = int(self.params['min shifts off between tasks'])
-		#num_shifts = int(spd * days)
-		#num_tasks = tps * num_shifts
-		#block_size = tps * (1 + min_shifts_off)
-		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)
-		# curr_row = 0
-		# curr_col = 0
-		# for i in range(num_shifts):
-			# for j in range(tps):
-				# for k in range(curr_col, min(curr_col + block_size, len(matrix))):
-					# matrix[curr_row][k] = 1
-				# curr_row += 1			
-			# curr_col += tps
-			
+		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)			
 		shifts = self.get_tasks_by_shift()
 		dummies = self.get_dummy_task_indices()
-		
 		for s in range(len(shifts)):
 			shift_range = shifts[s:min(s + 1 + min_shifts_off, len(shifts))]
 			block = reduce(lambda x,y: x + y, shift_range)
 			for t in shifts[s]:
 				for b in (shifts[s] if t in dummies else block):
 					matrix[t][b] = 1	
-			
 		for i in range(len(matrix)):
 			for j in range(len(matrix)):
 				if matrix[i][j] == 1:
 					matrix[j][i] = 1
-		
 		for i in range(len(matrix)):
 			matrix[i][i] = 0
 		return matrix
 
+	# This is the E matrix. E[t][s] = 1 iff task t is in shift s, 0 otherwise.
+	def build_E_matrix(self):
+		matrix = dim_matrix(self.num_tasks, self.num_shifts, 0)
+		shifts = self.get_tasks_by_shift()
+		for j in range(len(shifts)):
+			for i in shifts[j]:
+				matrix[i][j] = 1
+		return matrix
+	
+	# This is the cjk matrix. In each shift:
+	# 1) If min shifts off > 0, only the dummy has nonzero costs to non-dummy tasks in the next shift
+	# 2) Otherwise, each task in shift t has nonzero cost to each non-dummy task in shift t+1.
+	def build_transp_cost_matrix(self):
+		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)
+		
+		
 		
 	# This is rij.	
 	def build_resource_type_matrix(self):
