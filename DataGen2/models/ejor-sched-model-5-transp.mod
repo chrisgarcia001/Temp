@@ -30,7 +30,7 @@
  // Transportation-related inputs:
  float c[T][T] = ...;
  float E[T][Shifts] = ...;  // E[j][h] = 1 iff task j is in shift h. 
- 
+ {int} NonDummyT = ...;
  
  // ------------- II. DECISION VARIABLES: ------------
  dvar int+ x[R][T] in 0..1;
@@ -55,9 +55,11 @@
    	forall (kp in T) {
    	  x[i][k] + x[i][kp] + u[i][k][kp] <= 2; // Constraint 3
     }   	  
-    
-    x[i][k] <= sum (j in K) (r[i][j] * D[j][k]);  // Constraint 9      
    }    
+   
+   forall (i in R, k in NonDummyT) {
+     x[i][k] <= sum (j in K) (r[i][j] * D[j][k]); // Constraint 9   
+   }     
     
    forall (j in K, k in T) {
      D[j][k] - sum (i in R) r[i][j] * x[i][k] <= v[j][k]; // Constraint 5
@@ -77,13 +79,12 @@
    forall (i in R, j in T, k in T) { 
    	   x[i][j] + x[i][k] - 1 <= b[i][j][k];  // Constraint 21
    }
+   
+   // --- CAUSES CONFLICT - NEEDS DEBUGGING: --------
    forall (i in R, k in Shifts) {
      // E[T][Shifts]
      sum (j in T) E[j][k] * x[i][j] == 1;  // Constraint 22
-   }     
-   
-   // Old constraint 20 (v 1.1):
-   // TotalTransportationCost == sum (h in 2..numShifts) sum (i in R) sum (j in T) sum (k in T) (E[j][h-1] * E[k][h] * c[j][k] * b[i][j][k]);  // Constraint 20
+   }  
    
    TotalTransportationCost == sum (i in R) sum (j in T) sum (k in T) (c[j][k] * b[i][j][k]);  // Constraint 20
  }   

@@ -3,7 +3,6 @@ import random as rnd
 import math
 import subprocess
 
-# TODO - update to work with supervisors/others separately.
 
 # This class provides methods for generating problem data based on a set of parameters.
 class DataGenerator:
@@ -84,9 +83,7 @@ class DataGenerator:
 				matrix[i][j] = 1
 		return matrix
 	
-	# This is the cjk matrix. In each shift:
-	# 1) If min shifts off > 0, only the dummy has nonzero costs to non-dummy tasks in the next shift
-	# 2) Otherwise, each task in shift t has nonzero cost to each non-dummy task in shift t+1.
+	# This is the cjk matrix. Each task in each shift has nonzero cost to each non-dummy task in next shift.
 	def build_transp_cost_matrix(self):
 		matrix = dim_matrix(self.num_tasks, self.num_tasks, 0)
 		lb, ub = 0, 0
@@ -128,6 +125,10 @@ class DataGenerator:
 			inds = rnd.sample(t, rnd.randint(int(min_perc * self.num_tasks), math.ceil(max_perc * self.num_tasks)))
 			for (i,j) in inds:
 				matrix[i][j] = 1
+		dummies = self.get_dummy_task_indices()
+		for i in range(self.num_resources):
+			for j in dummies:
+				matrix[i][j] = 1
 		return matrix
 	
 	# This is d[j][j'][k].
@@ -137,9 +138,13 @@ class DataGenerator:
 		for j in range(1, len(ratio_matrix[0])):
 			ratio_matrix[0][j] = a / b
 		matrix = dim_matrix(self.num_resource_types, self.num_resource_types)
+		dummies = self.get_dummy_task_indices()
 		for i in range(len(ratio_matrix)):
 			for j in range(len(ratio_matrix[i])):
-				matrix[i][j] = list([ratio_matrix[i][j]] * self.num_tasks)
+				row = list([ratio_matrix[i][j]] * self.num_tasks)
+				for d in dummies:
+					row[d] = 0
+				matrix[i][j] = row
 		return matrix
 	
 	# This is B[i].
@@ -153,8 +158,6 @@ class DataGenerator:
 		min_perc, max_perc = tuple(self.params['percent total resource type required per task range'])
 		matrix = dim_matrix(self.num_resource_types, self.num_tasks, 0)
 		for k in range(self.num_tasks):
-			#inds = [0] + rnd.sample(range(1, self.num_resource_types), max(0, rnd.randint(min_types - 1, max_types - 1)))
-			#inds = rnd.sample(range(self.num_resource_types), max(0, rnd.randint(min_types, max_types)))
 			inds = range(self.num_resource_types)
 			for j in inds:
 				a = max(1,int(min_perc * self.available_resources[j]))
@@ -181,6 +184,11 @@ class DataGenerator:
 			for k in dummies:
 				matrix[j][k] = 10 * self.num_resources
 		return matrix
+	
+	# This is NonDummyT.
+	def build_non_dummy_task_list(self):
+		dummies = self.get_dummy_task_indices()
+		return map(lambda x: x + 1, filter(lambda y: not(y in dummies), range(self.num_tasks)))
 
 	# Build the initial set of data (i.e. prior to condition changes).
 	def build_initial_data(self):
@@ -201,10 +209,11 @@ class DataGenerator:
 			 'B':self.build_benefit_vector(),
 			 'numShifts':self.num_shifts,
 			 'c':self.build_transp_cost_matrix(),
-			 'E':self.build_E_matrix()}
+			 'E':self.build_E_matrix(),
+			 'NonDummyT':str(self.build_non_dummy_task_list()).replace('[','{').replace(']','}')}
 
 		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'numShifts', 'r', 'D',
-		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E']
+		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E', 'NonDummyT']
 		text = ''
 		for key in ordered_keys:
 			text += str(key) + ' = ' + str(h[key]) + ";\n"
@@ -221,7 +230,7 @@ class DataGenerator:
 		h['mP'] = dim_matrix(self.num_resources, self.num_tasks, self.params['move to cost'])
 		h['mM'] = dim_matrix(self.num_resources, self.num_tasks, self.params['move away cost'])
 		ordered_keys = ['numResources', 'numResourceTypes', 'numTasks', 'numShifts', 'r', 'D',
-		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E']
+		                'd', 'S', 'y', 'mP', 'mM', 'A', 'u', 'L', 'B', 'c', 'E', 'NonDummyT']
 		text = ''
 		for key in ordered_keys:
 			text += str(key) + ' = ' + str(h[key]) + ";\n"

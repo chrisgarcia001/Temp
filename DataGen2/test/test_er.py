@@ -64,6 +64,6 @@ mpp(dg.build_transp_cost_matrix())
 
 #--- Test ProblemExecutor.
 ex = ProblemExecutor(param_path)
-ex.solve_instance(1)
+#ex.solve_instance(1)
 
-#ex.solve_problem_set()
+ex.solve_problem_set()
