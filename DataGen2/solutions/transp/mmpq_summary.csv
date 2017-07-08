@@ -1,0 +1,21 @@
+Problem ID, Objective, Elapsed Time
+init_mmpq_1,1985.806,0.27
+init_mmpq_10,1561.443,0.06
+init_mmpq_2,1706.019,0.25
+init_mmpq_3,958.1928,0.06
+init_mmpq_4,1405.626,0.06
+init_mmpq_5,2192.942,0.20
+init_mmpq_6,1252.321,0.06
+init_mmpq_7,1986.909,0.05
+init_mmpq_8,911.4704,0.19
+init_mmpq_9,1362.335,0.03
+updated_mmpq_1,-7998.128,0.05
+updated_mmpq_10,-10303.97,0.08
+updated_mmpq_2,-10240.32,0.06
+updated_mmpq_3,-11678.08,0.05
+updated_mmpq_4,-11940.75,0.06
+updated_mmpq_5,-7575.48,0.08
+updated_mmpq_6,-10998.64,0.06
+updated_mmpq_7,-10451.91,0.27
+updated_mmpq_8,-12325.83,0.09
+updated_mmpq_9,-10823.8,0.05
