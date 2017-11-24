@@ -15,3 +15,4 @@ python .\src\run_experiment.py .\params\ppmq.csv
 python .\src\run_experiment.py .\params\ppms.csv
 python .\src\run_experiment.py .\params\pppq.csv
 python .\src\run_experiment.py .\params\ppps.csv
+del problems\*.dat
