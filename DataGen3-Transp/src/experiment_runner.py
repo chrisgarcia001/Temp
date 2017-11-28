@@ -285,7 +285,12 @@ class ProblemExecutor:
 			time = time_list[len(time_list) - 2]
 		except:
 			print('Error getting time: ' + str(solution_filename))
-		h = {'text':raw_output, 'x':x, 'objective':objective, 'time':time}
+		try:
+			net_benefit_text = filter(lambda x: x.startswith('NetBenefit ='), raw_output.split("\n"))[0]
+			net_benefit = eval(net_benefit_text.split('=')[1].strip())
+		except:
+			print('Error getting NetBenefit: ' + str(solution_filename))	
+		h = {'text':raw_output, 'x':x, 'objective':objective, 'net_benefit':net_benefit, 'time':time}
 		# print({'objective':objective, 'time':time})
 		return h
 	
@@ -305,8 +310,8 @@ class ProblemExecutor:
 		# ----- Calculate quality delta and stability ------------
 		x2 = updated_sol_data['x']
 		x1 = init_sol_data['x']
-		s2 = float(updated_sol_data['objective'])
-		s1 = float(init_sol_data['objective'])
+		s2 = float(updated_sol_data['net_benefit'])
+		s1 = float(init_sol_data['net_benefit'])
 		quality_delta = (s2 - s1) / s1
 		stability = float(len(filter(lambda (x, y): x == y, zip(x1, x2)))) / float(len(x1))
 		cross_sol_data = {'quality':str(quality_delta), 'stability':str(stability)}

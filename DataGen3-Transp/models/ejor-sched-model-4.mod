@@ -69,6 +69,10 @@
 // in future problem modification.
 execute DISPLAY {
   writeln();
+  write("NetBenefit = ");
+  write(TotalAllocBenefit - TotalShortageCost);
+  writeln();  
+  writeln(); 
   write("x = [");
   for(var i = 1; i <= numResources; i ++) {
     write("[");
