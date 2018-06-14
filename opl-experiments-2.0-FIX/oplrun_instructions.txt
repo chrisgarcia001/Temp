@@ -1,0 +1,29 @@
+It's very easy - there is just a .exe file to download and run, and this will install Ruby on your computer. Once you have done this, do the following:
+
+1. Place all your data files (.dat) in a single directory.
+
+2. Create an output directory where you want the  results to be stored.
+
+3. Open a command prompt and go into the directory where you put the attached program I am sending you.
+
+4. To run, just type the following in the command prompt and specify the model and directory information:
+
+ruby batch_oplrun.rb <your model file (.mod file)> <input directory with your data files (.dat files)> <your output directory>
+
+Here's a hypothetical example, assuming I have placed the attached file (batch_oplrun.rb), model (scheduling_model.mod), input, and output directories within the c:\ directory:
+
+> cd c:\
+c:\> ruby batch_oplrun.rb scheduling_model.mod input_files output_files
+
+As an additional tip, you might also want to place a time limit in your model file (since you do not know how long some problems may take). To do this, add the following to the beginning of your model:
+
+execute PARAMS {
+  cplex.tilim = 1200; // time limit in seconds
+}
+
+
+TO SUMMARIZE OUTPUT:
+
+1. Place ilog_output_summarizer.rb in appropriate folder and go there
+
+2. Execute this: > ruby ilog_output_summarizer.rb <directory>

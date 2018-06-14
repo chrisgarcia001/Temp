@@ -1,0 +1,10 @@
+Param,Value(s)
+input_dir,../../data
+output_dir,../../output
+max_time,20
+max_iter,500000
+max_unimprove_time,10
+max_unimprove_iter,50000
+mutation_rate,0.02
+report_time_interval,2
+alg_name,ls
